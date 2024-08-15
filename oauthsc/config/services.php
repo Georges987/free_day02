@@ -56,6 +56,8 @@ return [
         'client_id' => env('MICROSOFT_CLIENT_ID'),
         'client_secret' => env('MICROSOFT_CLIENT_SECRET'),
         'redirect' => 'http://localhost:8000/auth/callback/microsoft',
+        'tenant' => 'common',
+        'include_tenant_info' => true,
     ],
 
     'slack' => [

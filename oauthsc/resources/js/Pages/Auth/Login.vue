@@ -7,6 +7,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { IconBrandLinkedin, IconBrandFacebook, IconBrandGit, IconBrandWindows, IconBrandGoogle } from '@tabler/icons-vue';
 
 defineProps({
     canResetPassword: Boolean,
@@ -108,20 +109,36 @@ const submit = () => {
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"> Log in </PrimaryButton>
             </div>
         </form>
-        <div>
-            <PrimaryButton class="ms-4" @click="routeto('github')" :disabled="form.processing">
+        <div class="flex flex-col w-full my-4 space-y-3">
+        <PrimaryButton class="ms-4" @click="routeto('github')" :disabled="form.processing">
+
+            <IconBrandGit class="w-6 h-6 mr-6" />
+
             Log in with github
         </PrimaryButton>
         <PrimaryButton class="ms-4" @click="routeto('google')" :disabled="form.processing">
+
+            <IconBrandGoogle class="w-6 h-6 mr-6" />
+
             Log in with google
         </PrimaryButton>
         <PrimaryButton class="ms-4" @click="routeto('facebook')" :disabled="form.processing">
+
+            <IconBrandFacebook class="w-6 h-6 mr-6" />
+
             Log in with facebook
         </PrimaryButton>
         <PrimaryButton class="ms-4" @click="routeto('linkedin')" :disabled="form.processing">
+
+            <IconBrandLinkedin class="w-6 h-6 mr-6" />
+
             Log in with linkedin
         </PrimaryButton>
         <PrimaryButton class="ms-4" @click="routeto('microsoft')" :disabled="form.processing">
+
+
+            <IconBrandWindows class="w-6 h-6 mr-6" />
+
             Log in with microsoft
         </PrimaryButton>
         </div>

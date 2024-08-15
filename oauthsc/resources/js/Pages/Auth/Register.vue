@@ -7,6 +7,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { IconBrandLinkedin, IconBrandFacebook, IconBrandGit, IconBrandWindows, IconBrandGoogle } from '@tabler/icons-vue';
 
 const form = useForm({
     name: '',
@@ -15,6 +16,26 @@ const form = useForm({
     password_confirmation: '',
     terms: false,
 });
+
+const routeto = (provider) => {
+    if (provider === 'github') {
+        window.location.href = route('github.redirect');
+    }
+    else if (provider === 'google') {
+        window.location.href = route('google.redirect');
+    }
+    else if (provider === 'facebook') {
+        window.location.href = route('facebook.redirect');
+    }
+    else if (provider === 'linkedin')
+    {
+        window.location.href = route('linkedin.redirect');
+    }
+    else if (provider === 'microsoft')
+    {
+        window.location.href = route('microsoft.redirect');
+    }
+};
 
 const submit = () => {
     form.post(route('register'), {
@@ -108,5 +129,41 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
+        <div class="flex items-center justify-center mt-4 text-gray-600 dark:text-gray-400">
+            Or register with
+        </div>
+        <div class="flex flex-col w-full my-4 space-y-3">
+        <PrimaryButton class="ms-4" @click="routeto('github')" :disabled="form.processing">
+
+            <IconBrandGit class="w-6 h-6 mr-6" />
+
+            Log in with github
+        </PrimaryButton>
+        <PrimaryButton class="ms-4" @click="routeto('google')" :disabled="form.processing">
+
+            <IconBrandGoogle class="w-6 h-6 mr-6" />
+
+            Log in with google
+        </PrimaryButton>
+        <PrimaryButton class="ms-4" @click="routeto('facebook')" :disabled="form.processing">
+
+            <IconBrandFacebook class="w-6 h-6 mr-6" />
+
+            Log in with facebook
+        </PrimaryButton>
+        <PrimaryButton class="ms-4" @click="routeto('linkedin')" :disabled="form.processing">
+
+            <IconBrandLinkedin class="w-6 h-6 mr-6" />
+
+            Log in with linkedin
+        </PrimaryButton>
+        <PrimaryButton class="ms-4" @click="routeto('microsoft')" :disabled="form.processing">
+
+
+            <IconBrandWindows class="w-6 h-6 mr-6" />
+
+            Log in with microsoft
+        </PrimaryButton>
+        </div>
     </AuthenticationCard>
 </template>
