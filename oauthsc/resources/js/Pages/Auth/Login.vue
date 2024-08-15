@@ -109,6 +109,9 @@ const submit = () => {
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"> Log in </PrimaryButton>
             </div>
         </form>
+        <div class="flex items-center justify-center mt-4 text-gray-600 dark:text-gray-400">
+            Or register with
+        </div>
         <div class="flex flex-col w-full my-4 space-y-3">
         <PrimaryButton class="ms-4" @click="routeto('github')" :disabled="form.processing">
 
