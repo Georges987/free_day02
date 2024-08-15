@@ -26,11 +26,11 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('/auth/redirect', function () {
+Route::get('/auth/redirect/github', function () {
     return Socialite::driver('github')->redirect();
-})->name('oauth.redirect');
+})->name('github.redirect');
 
-Route::get('/auth/callback', function () {
+Route::get('/auth/callback/github', function () {
     $githubUser = Socialite::driver('github')->user();
 
     $user = User::updateOrCreate([
@@ -38,8 +38,93 @@ Route::get('/auth/callback', function () {
     ], [
         'name' => $githubUser->name,
         'email' => $githubUser->email,
+        'profile_photo_path' => $githubUser->avatar,
+        'password' => bcrypt('TheNexus@7'),
         'github_token' => $githubUser->token,
         'github_refresh_token' => $githubUser->refreshToken,
+    ]);
+
+    Auth::login($user);
+
+    return redirect('/dashboard');
+});
+
+
+Route::get('/auth/redirect/google', function () {
+    return Socialite::driver('google')->redirect();
+})->name('google.redirect');
+
+Route::get('/auth/callback/google', function () {
+    $googleUser = Socialite::driver('google')->user();
+
+    // dd($googleUser);
+
+    $user = User::updateOrCreate([
+        'google_id' => $googleUser->id,
+    ], [
+        'name' => $googleUser->name,
+        'email' => $googleUser->email,
+        'password' => bcrypt('TheNexus@7'),
+        'google_token' => $googleUser->token,
+        'google_refresh_token' => $googleUser->refreshToken,
+        'profile_photo_path' => $googleUser->avatar,
+    ]);
+
+    Auth::login($user);
+
+    return redirect('/dashboard');
+});
+
+Route::get('/auth/redirect/facebook', function () {
+    return Socialite::driver('facebook')->redirect();
+})->name('facebook.redirect');
+
+Route::get('/auth/callback/facebook', function () {
+    $facebookUser = Socialite::driver('facebook')->user();
+
+    // dd($facebookUser);
+
+    $user = User::updateOrCreate([
+        'facebook_id' => $facebookUser->id,
+    ], [
+        'name' => $facebookUser->name,
+        'email' => $facebookUser->email,
+        'password' => bcrypt('TheNexus@7'),
+        'google_token' => $facebookUser->token,
+        'google_refresh_token' => $facebookUser->refreshToken,
+        'profile_photo_path' => $facebookUser->avatar,
+    ]);
+
+    Auth::login($user);
+
+    return redirect('/dashboard');
+});
+
+Route::get('/auth/redirect/linkedin', function () {
+    return Socialite::driver('linkedin-openid')
+        // ->setScopes([
+        //     "openid",
+        //     "profile",
+        //     "email"
+        // ])
+        ->redirect();
+})->name('linkedin.redirect');
+
+
+Route::get('/auth/callback/linkedin', function () {
+    $linkedinUser = Socialite::driver('linkedin-openid')->user();
+
+    // dd($linkedinUser);
+
+    $user = User::updateOrCreate([
+        'google_id' => $linkedinUser->id,
+    ], [
+        'name' => $linkedinUser->name,
+        'email' => $linkedinUser->email,
+        'password' => bcrypt('TheNexus@7'),
+        'linkedin_token' => $linkedinUser->token,
+        'linkedin_refresh_token' => $linkedinUser->refreshToken,
+        'profile_photo_path' => $linkedinUser->avatar,
     ]);
 
     Auth::login($user);

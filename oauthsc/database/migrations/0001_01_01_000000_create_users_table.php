@@ -16,8 +16,29 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable();
+            $table->string('password');
             $table->rememberToken();
+
+            $table->text('github_token')->nullable();
+            $table->text('github_id')->nullable();
+            $table->text('github_refresh_token')->nullable();
+
+            $table->text('google_token')->nullable();
+            $table->text('google_id')->nullable();
+            $table->text('google_refresh_token')->nullable();
+
+            $table->text('facebook_token')->nullable();
+            $table->text('facebook_id')->nullable();
+            $table->text('facebook_refresh_token')->nullable();
+
+            $table->text('linkedin_token')->nullable();
+            $table->text('linkedin_id')->nullable();
+            $table->text('linkedin_refresh_token')->nullable();
+
+            $table->text('microsoft_token')->nullable();
+            $table->text('microsoft_id')->nullable();
+            $table->text('microsoft_refresh_token')->nullable();
+
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();

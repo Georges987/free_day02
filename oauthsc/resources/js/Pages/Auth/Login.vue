@@ -19,8 +19,24 @@ const form = useForm({
     remember: false
 });
 
-const routeto = () => {
-    window.location.href = route('oauth.redirect');
+const routeto = (provider) => {
+    if (provider === 'github') {
+        window.location.href = route('github.redirect');
+    }
+    else if (provider === 'google') {
+        window.location.href = route('google.redirect');
+    }
+    else if (provider === 'facebook') {
+        window.location.href = route('facebook.redirect');
+    }
+    else if (provider === 'linkedin')
+    {
+        window.location.href = route('linkedin.redirect');
+    }
+    else if (provider === 'microsoft')
+    {
+        window.location.href = route('microsoft.redirect');
+    }
 };
 
 const submit = () => {
@@ -92,8 +108,22 @@ const submit = () => {
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"> Log in </PrimaryButton>
             </div>
         </form>
-        <PrimaryButton class="ms-4" @click="routeto" :disabled="form.processing">
+        <div>
+            <PrimaryButton class="ms-4" @click="routeto('github')" :disabled="form.processing">
             Log in with github
         </PrimaryButton>
+        <PrimaryButton class="ms-4" @click="routeto('google')" :disabled="form.processing">
+            Log in with google
+        </PrimaryButton>
+        <PrimaryButton class="ms-4" @click="routeto('facebook')" :disabled="form.processing">
+            Log in with facebook
+        </PrimaryButton>
+        <PrimaryButton class="ms-4" @click="routeto('linkedin')" :disabled="form.processing">
+            Log in with linkedin
+        </PrimaryButton>
+        <PrimaryButton class="ms-4" @click="routeto('microsoft')" :disabled="form.processing">
+            Log in with microsoft
+        </PrimaryButton>
+        </div>
     </AuthenticationCard>
 </template>
