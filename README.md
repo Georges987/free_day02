@@ -34,3 +34,22 @@ And it the same process for Facebook, Linkedin, etc.
 6. Run `cp .env.example .env`
 7. Run `php artisan key:generate`
 8. Run `php artisan serve`
+
+## How to contribute
+
+1. Fork the repository or clone it.
+2. Create a new branch.
+3. Make your changes.
+4. Commit your changes.
+5. Push your changes.
+6. Create a new pull request.
+7. Wait for the pull request to be reviewed.
+8. Thank you for contributing!
+
+## License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Author
+
+[Georges AYENI](https://georges.vercel.app)
