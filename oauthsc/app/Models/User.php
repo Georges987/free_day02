@@ -46,8 +46,9 @@ class User extends Authenticatable
         'microsoft_id',
         'microsoft_token',
         'microsoft_refresh_token',
-        
+
         'password',
+        'is_basic_auth',
     ];
 
     /**

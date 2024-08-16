@@ -39,6 +39,8 @@ return new class extends Migration
             $table->text('microsoft_id')->nullable();
             $table->text('microsoft_refresh_token')->nullable();
 
+            $table->boolean('is_basic_auth')->default(false);
+
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();

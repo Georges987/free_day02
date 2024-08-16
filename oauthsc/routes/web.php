@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserManageController;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
@@ -21,9 +22,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [UserManageController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware(['guest'])->group(function () {
@@ -34,16 +33,34 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/auth/callback/github', function () {
         $githubUser = Socialite::driver('github')->user();
 
-        $user = User::updateOrCreate([
-            'email' => $githubUser->email,
-        ], [
-            'name' => $githubUser->name,
-            'github_id' => $githubUser->id,
-            'password' => bcrypt(Str::random(16)),
-            'github_token' => $githubUser->token,
-            'github_refresh_token' => $githubUser->refreshToken,
-            'profile_photo_path' => $githubUser->avatar,
-        ]);
+        $user = User::where('email', $githubUser->email)->first();
+
+        // if the user have basic auth, we will update the user with github info
+        if ($user && $user->is_basic_auth) {
+            $user->update([
+                'github_id' => $githubUser->id,
+                'github_token' => $githubUser->token,
+                'github_refresh_token' => $githubUser->refreshToken,
+                'profile_photo_path' => $githubUser->avatar,
+            ]);
+
+            Auth::login($user);
+
+            return redirect('/dashboard');
+        }
+        else
+        {
+            $user = User::updateOrCreate([
+                'email' => $githubUser->email,
+            ], [
+                'name' => $githubUser->name,
+                'github_id' => $githubUser->id,
+                'password' => bcrypt(Str::random(16)),
+                'github_token' => $githubUser->token,
+                'github_refresh_token' => $githubUser->refreshToken,
+                'profile_photo_path' => $githubUser->avatar,
+            ]);
+        }
 
         Auth::login($user);
 
@@ -58,18 +75,34 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/auth/callback/google', function () {
         $googleUser = Socialite::driver('google')->user();
 
-        // dd($googleUser);
+        $user = User::where('email', $googleUser->email)->first();
 
-        $user = User::updateOrCreate([
-            'email' => $googleUser->email,
-        ], [
-            'name' => $googleUser->name,
-            'google_id' => $googleUser->id,
-            'password' => bcrypt(Str::random(16)),
-            'google_token' => $googleUser->token,
-            'google_refresh_token' => $googleUser->refreshToken,
-            'profile_photo_path' => $googleUser->avatar,
-        ]);
+        // if the user have basic auth, we will update the user with google info
+        if ($user && $user->is_basic_auth) {
+            $user->update([
+                'google_id' => $googleUser->id,
+                'google_token' => $googleUser->token,
+                'google_refresh_token' => $googleUser->refreshToken,
+                'profile_photo_path' => $googleUser->avatar,
+            ]);
+
+            Auth::login($user);
+
+            return redirect('/dashboard');
+        }
+        else
+        {
+            $user = User::updateOrCreate([
+                'email' => $googleUser->email,
+            ], [
+                'name' => $googleUser->name,
+                'google_id' => $googleUser->id,
+                'password' => bcrypt(Str::random(16)),
+                'google_token' => $googleUser->token,
+                'google_refresh_token' => $googleUser->refreshToken,
+                'profile_photo_path' => $googleUser->avatar,
+            ]);
+        }
 
         Auth::login($user);
 
@@ -83,18 +116,34 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/auth/callback/facebook', function () {
         $facebookUser = Socialite::driver('facebook')->user();
 
-        // dd($facebookUser);
+        $user = User::where('email', $facebookUser->email)->first();
 
-        $user = User::updateOrCreate([
-            'email' => $facebookUser->email,
-        ], [
-            'name' => $facebookUser->name,
-            'password' => bcrypt(Str::random(16)),
-            'facebook_id' => $facebookUser->id,
-            'facebook_token' => $facebookUser->token,
-            'facebook_refresh_token' => $facebookUser->refreshToken,
-            'profile_photo_path' => $facebookUser->avatar,
-        ]);
+        // if the user have basic auth, we will update the user with facebook info
+        if ($user && $user->is_basic_auth) {
+            $user->update([
+                'facebook_id' => $facebookUser->id,
+                'facebook_token' => $facebookUser->token,
+                'facebook_refresh_token' => $facebookUser->refreshToken,
+                'profile_photo_path' => $facebookUser->avatar,
+            ]);
+
+            Auth::login($user);
+
+            return redirect('/dashboard');
+        }
+        else
+        {
+            $user = User::updateOrCreate([
+                'email' => $facebookUser->email,
+            ], [
+                'name' => $facebookUser->name,
+                'facebook_id' => $facebookUser->id,
+                'password' => bcrypt(Str::random(16)),
+                'facebook_token' => $facebookUser->token,
+                'facebook_refresh_token' => $facebookUser->refreshToken,
+                'profile_photo_path' => $facebookUser->avatar,
+            ]);
+        }
 
         Auth::login($user);
 
@@ -115,16 +164,34 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/auth/callback/linkedin', function () {
         $linkedinUser = Socialite::driver('linkedin-openid')->user();
 
-        $user = User::updateOrCreate([
-            'email' => $linkedinUser->email,
-        ], [
-            'name' => $linkedinUser->name,
-            'linkedin_id' => $linkedinUser->id,
-            'password' => bcrypt(Str::random(16)),
-            'linkedin_token' => $linkedinUser->token,
-            'linkedin_refresh_token' => $linkedinUser->refreshToken,
-            'profile_photo_path' => $linkedinUser->avatar,
-        ]);
+        $user = User::where('email', $linkedinUser->email)->first();
+
+        // if the user have basic auth, we will update the user with linkedin info
+        if ($user && $user->is_basic_auth) {
+            $user->update([
+                'linkedin_id' => $linkedinUser->id,
+                'linkedin_token' => $linkedinUser->token,
+                'linkedin_refresh_token' => $linkedinUser->refreshToken,
+                'profile_photo_path' => $linkedinUser->avatar,
+            ]);
+
+            Auth::login($user);
+
+            return redirect('/dashboard');
+        }
+        else
+        {
+            $user = User::updateOrCreate([
+                'email' => $linkedinUser->email,
+            ], [
+                'name' => $linkedinUser->name,
+                'linkedin_id' => $linkedinUser->id,
+                'password' => bcrypt(Str::random(16)),
+                'linkedin_token' => $linkedinUser->token,
+                'linkedin_refresh_token' => $linkedinUser->refreshToken,
+                'profile_photo_path' => $linkedinUser->avatar,
+            ]);
+        }
 
         Auth::login($user);
 
@@ -138,16 +205,34 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/auth/callback/microsoft', function () {
         $microsoftUser = Socialite::driver('microsoft')->user();
 
-        $user = User::updateOrCreate([
-            'email' => $microsoftUser->email,
-        ], [
-            'name' => $microsoftUser->name,
-            'microsoft_id' => $microsoftUser->id,
-            'password' => bcrypt(Str::random(16)),
-            'microsoft_token' => $microsoftUser->token,
-            'microsoft_refresh_token' => $microsoftUser->refreshToken,
-            'profile_photo_path' => $microsoftUser->avatar,
-        ]);
+        $user = User::where('email', $microsoftUser->email)->first();
+
+        // if the user have basic auth, we will update the user with microsoft info
+        if ($user && $user->is_basic_auth) {
+            $user->update([
+                'microsoft_id' => $microsoftUser->id,
+                'microsoft_token' => $microsoftUser->token,
+                'microsoft_refresh_token' => $microsoftUser->refreshToken,
+                'profile_photo_path' => $microsoftUser->avatar,
+            ]);
+
+            Auth::login($user);
+
+            return redirect('/dashboard');
+        }
+        else
+        {
+            $user = User::updateOrCreate([
+                'email' => $microsoftUser->email,
+            ], [
+                'name' => $microsoftUser->name,
+                'microsoft_id' => $microsoftUser->id,
+                'password' => bcrypt(Str::random(16)),
+                'microsoft_token' => $microsoftUser->token,
+                'microsoft_refresh_token' => $microsoftUser->refreshToken,
+                'profile_photo_path' => $microsoftUser->avatar,
+            ]);
+        }
 
         Auth::login($user);
 
