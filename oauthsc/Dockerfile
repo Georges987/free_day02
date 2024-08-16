@@ -1,55 +1,35 @@
-FROM node:lts-alpine as frontend
+FROM php:8.3-fpm
 
-# use /app as working directory
+# Arguments defined in docker-compose.yml
+ARG user
+ARG uid
 
-WORKDIR /app
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
 
-# Copy existing application directory contents
-
-COPY . /app/
-
-# Install npm dependencies
-
-RUN npm install
-
-# Build frontend
-
-RUN npm run build
-
-# FROM php:8.3 as laravel
-
-FROM php:8.3 as laravel
-
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    zip \
-    unzip \
-    && docker-php-ext-install zip
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Create system user to run Composer and Artisan Commands
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
 
 # Set working directory
+WORKDIR /var/www
 
-WORKDIR /app
+USER $user
 
-# Copy existing application directory contents
-
-COPY --from=frontend /app /app
-
-# Install composer dependencies
-
-RUN composer install
-
-RUN cp .env.example .env
-
-RUN php artisan optimize:clear
-
-RUN php artisan key:generate
-
-# Expose port 8000 and start application
-
-EXPOSE 8000
-
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

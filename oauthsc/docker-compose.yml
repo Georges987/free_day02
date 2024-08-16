@@ -1,46 +1,50 @@
+version: "3.7"
 services:
-    laravel:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        ports:
-            - '${APP_PORT:-80}:80'
-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
-        volumes:
-            - '.:/app'
-        command: 'php artisan migrate:fresh --seed'
-        networks:
-            - dot
-        depends_on:
-            - database
-    database:
-        image: 'postgres:16'
-        ports:
-            - '${DB_PORT:-5432}:5432'
-        env_file:
-            - '.env'
-        environment:
-            POSTGRES_DB: '${DB_DATABASE}'
-            POSTGRES_USER: '${DB_USERNAME}'
-            POSTGRES_PASSWORD: '${DB_PASSWORD}'
-        volumes:
-            - 'db-postgres:/var/lib/postgresql/data'
-        networks:
-            - dot
-        healthcheck:
-            test:
-                [
-                    'CMD-SHELL',
-                    'pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE} -h localhost -p 5432'
-                ]
-            retries: 3
-            timeout: 5s
+  app:
+    build:
+      args:
+        user: sammy
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: travellist
+    container_name: travellist-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - travellist
+
+  db:
+    image: mysql:8.0
+    container_name: travellist-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - travellist
+
+  nginx:
+    image: nginx:alpine
+    container_name: travellist-nginx
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - travellist
 
 networks:
-    dot:
-        driver: bridge
-volumes:
-    db-postgres:
-        driver: local
+  travellist:
+    driver: bridge
+
